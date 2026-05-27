@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КБЖУ YoFood</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #ffffff;
+            --bg2: #f5f4f0;
+            --bg3: #eeede8;
+            --text: #1a1a18;
+            --text2: #6b6b67;
+            --text3: #a0a09c;
+            --border: rgba(0,0,0,0.08);
+            --border2: rgba(0,0,0,0.14);
+            --radius: 10px;
+            --radius-lg: 14px;
+            --font: 'Manrope', system-ui, sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #111110;
+                --bg2: #1c1c1a;
+                --bg3: #252523;
+                --text: #f0efe9;
+                --text2: #8a8a84;
+                --text3: #5a5a56;
+                --border: rgba(255,255,255,0.07);
+                --border2: rgba(255,255,255,0.12);
+            }
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.25rem 4rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 0.5px solid var(--border2);
+            padding-bottom: 1.5rem;
+        }
+
+        header h1 {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        header p {
+            font-size: 14px;
+            color: var(--text2);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 1.25rem;
+            align-items: center;
+        }
+
+        .controls input,
+        .controls select {
+            height: 38px;
+            padding: 0 12px;
+            font-size: 14px;
+            font-family: var(--font);
+            border: 0.5px solid var(--border2);
+            border-radius: var(--radius);
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .controls input { flex: 1; min-width: 180px; }
+        .controls select { cursor: pointer; }
+        .controls input:focus,
+        .controls select:focus { border-color: var(--text3); }
+
+        .cat-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 1.25rem;
+        }
+
+        .tab {
+            padding: 5px 15px;
+            font-size: 13px;
+            font-family: var(--font);
+            font-weight: 500;
+            border: 0.5px solid var(--border2);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--text2);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .tab:hover { background: var(--bg2); color: var(--text); }
+        .tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            background: var(--bg2);
+            border-radius: var(--radius);
+            padding: 10px 14px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 3px;
+        }
+
+        .stat-val {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+
+        .card {
+            background: var(--bg);
+            border: 0.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            transition: border-color 0.15s;
+        }
+
+        .card:hover { border-color: var(--border2); }
+
+        .cat-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+            letter-spacing: 0.01em;
+        }
+
+        .cat-Завтрак  { background: #FEF3C7; color: #92400E; }
+        .cat-Суп      { background: #FEE2E2; color: #991B1B; }
+        .cat-Салаты   { background: #D1FAE5; color: #065F46; }
+        .cat-Горячее  { background: #FCE7F3; color: #9D174D; }
+        .cat-Гарнир   { background: #DBEAFE; color: #1E3A5F; }
+        .cat-Напитки  { background: #EDE9FE; color: #4C1D95; }
+        .cat-Соусы    { background: #F3F4F6; color: #374151; }
+
+        @media (prefers-color-scheme: dark) {
+            .cat-Завтрак  { background: #451A03; color: #FDE68A; }
+            .cat-Суп      { background: #450A0A; color: #FCA5A5; }
+            .cat-Салаты   { background: #022C22; color: #6EE7B7; }
+            .cat-Горячее  { background: #500724; color: #F9A8D4; }
+            .cat-Гарнир   { background: #0C1A2E; color: #93C5FD; }
+            .cat-Напитки  { background: #2E1065; color: #C4B5FD; }
+            .cat-Соусы    { background: #1F2937; color: #D1D5DB; }
+        }
+
+        .card-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .macros {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .macro {
+            font-size: 12px;
+            color: var(--text2);
+        }
+
+        .macro span { font-weight: 500; color: var(--text); }
+
+        .kcal-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 2px;
+        }
+
+        .kcal-num {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .kcal-unit {
+            font-size: 11px;
+            color: var(--text3);
+        }
+
+        .allergens {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 0.5px solid var(--border);
+            line-height: 1.5;
+        }
+
+        .allergen-icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            vertical-align: -1px;
+            margin-right: 3px;
+            opacity: 0.5;
+        }
+
+        .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text2);
+            font-size: 15px;
+        }
+
+        .empty svg {
+            display: block;
+            margin: 0 auto 12px;
+            opacity: 0.3;
+        }
+
+        @media (max-width: 600px) {
+            .page { padding: 1.25rem 1rem 3rem; }
+            header h1 { font-size: 26px; }
+            .grid { grid-template-columns: 1fr; }
+            .controls select { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <h1>Меню</h1>
+        <p>Фильтруйте и сортируйте блюда</p>
+    </header>
+
+    <div class="controls">
+        <input type="text" id="search" placeholder="Поиск по названию или составу...">
+        <select id="sort">
+            <option value="default">По умолчанию</option>
+            <option value="kcal_asc">Калории ↑</option>
+            <option value="kcal_desc">Калории ↓</option>
+            <option value="protein_desc">Белки ↓</option>
+            <option value="fat_asc">Жиры ↑</option>
+            <option value="carbs_asc">Углеводы ↑</option>
+        </select>
+        <select id="allergen">
+            <option value="">Все аллергены</option>
+            <option value="no_gluten">Без глютена</option>
+            <option value="no_lactose">Без лактозы</option>
+            <option value="no_egg">Без яиц</option>
+            <option value="no_nuts">Без орехов</option>
+        </select>
+    </div>
+
+    <div class="cat-tabs" id="cats"></div>
+    <div class="stats" id="stats"></div>
+    <div class="grid" id="grid"></div>
+</div>
+
+<script>
+    const menu = [
+        {name:"Овсяная каша (молоко классическое)",cat:"Завтрак",kcal:206,protein:6.3,fat:1.5,carbs:41.3,weight:"250 г",allergens:"лактоза, глютен",ingredients:"овсяная крупа, молоко, сахар, сливочное масло"},
+        {name:"Овсяная каша (молоко кокосовое)",cat:"Завтрак",kcal:306,protein:8.1,fat:18.1,carbs:28.8,weight:"250 г",allergens:"глютен",ingredients:"овсяная крупа, кокосовое молоко, сахар, сливочное масло"},
+        {name:"Гранола с йогуртом",cat:"Завтрак",kcal:422,protein:17.4,fat:24.7,carbs:46.7,weight:"220 г",allergens:"орехи, мед, лактоза, глютен",ingredients:"гранола, йогурт, клубника"},
+        {name:"Рисовая каша с грушей",cat:"Завтрак",kcal:413,protein:6,fat:15.8,carbs:60.5,weight:"270 г",allergens:"лактоза",ingredients:"рис, сливочное масло, молоко, сахар, груша"},
+        {name:"Круассан с мортаделлой и вялеными томатами",cat:"Завтрак",kcal:478,protein:16.5,fat:31.8,carbs:31.2,weight:"170 г",allergens:"лактоза, глютен",ingredients:"круассан, мортаделла, вяленые томаты, брынза, сливки"},
+        {name:"Драники с лососем и сметаной",cat:"Завтрак",kcal:285,protein:12.6,fat:10.9,carbs:32.5,weight:"210 г",allergens:"лактоза, крахмал",ingredients:"картофель, мука, яйцо, лук, лосось, сметана"},
+        {name:"Трилече",cat:"Завтрак",kcal:629,protein:14.9,fat:29.9,carbs:75.6,weight:"250 г",allergens:"яйцо, лактоза, глютен",ingredients:"яйца, сахар, мука, сливки, молоко, сгущёнка, карамель"},
+        {name:"Скрэмбл с грибами и пармезаном",cat:"Завтрак",kcal:352,protein:22.4,fat:26.1,carbs:5.7,weight:"250 г",allergens:"яйцо, лактоза, грибы",ingredients:"яйца, молоко, шампиньоны, соевый соус, пармезан"},
+        {name:"Сэндвич с лососем и творожным сыром",cat:"Завтрак",kcal:482,protein:26.9,fat:23.7,carbs:39.6,weight:"200 г",allergens:"лактоза, глютен",ingredients:"тост, творожный сыр, лосось, огурцы, микс салат"},
+        {name:"Фритата с овощами и шпинатом",cat:"Завтрак",kcal:282,protein:17.4,fat:18.7,carbs:10.2,weight:"300 г",allergens:"яйцо, лактоза, перец, томаты",ingredients:"яйца, молоко, шпинат, кабачки, перец, черри"},
+        {name:"Тартар из лосося на вафле",cat:"Завтрак",kcal:444,protein:22.6,fat:25.7,carbs:32.4,weight:"200 г",allergens:"яйцо, лактоза, глютен, лук",ingredients:"вафля, лосось, соевый соус, красный лук, зелень, огурцы"},
+        {name:"Панкейки с беконом",cat:"Завтрак",kcal:632,protein:23.5,fat:32.8,carbs:56.4,weight:"3 шт + 35 г",allergens:"яйцо, лактоза, глютен",ingredients:"панкейки, бекон, сироп агавы"},
+        {name:"Английский завтрак",cat:"Завтрак",kcal:721,protein:41,fat:44.6,carbs:41.2,weight:"~490 г",allergens:"яйцо, глютен",ingredients:"глазунья, бекон, фасоль, грибы, сосиска, помидоры, тосты"},
+        {name:"Крок-мадам",cat:"Завтрак",kcal:515,protein:30.4,fat:28.6,carbs:33.9,weight:"270 г",allergens:"яйцо, лактоза, глютен",ingredients:"тост, ветчина, сыр гауда, яйца, молоко, руккола"},
+        {name:"Запеканка творожная",cat:"Завтрак",kcal:398,protein:30,fat:26.8,carbs:25.3,weight:"180 г",allergens:"яйцо, глютен, орехи",ingredients:"творог, сметана, сахар, яйцо, мука, орехи"},
+        {name:"Морс ягодный",cat:"Напитки",kcal:12,protein:0.1,fat:0,carbs:3.1,weight:"300 мл",allergens:"ягоды",ingredients:"ягоды, сахар, вода"},
+        {name:"Фреш апельсиновый",cat:"Напитки",kcal:138,protein:2.1,fat:0.3,carbs:30.9,weight:"300 мл",allergens:"цитрусы",ingredients:"апельсин"},
+        {name:"Морс облепиховый",cat:"Напитки",kcal:90,protein:0.2,fat:0.4,carbs:21.5,weight:"300 мл",allergens:"",ingredients:"облепиха, сахар, вода"},
+        {name:"Шейк банан-манго",cat:"Напитки",kcal:255,protein:2.6,fat:7.2,carbs:49.2,weight:"300 мл",allergens:"лактоза, орехи (следы)",ingredients:"кокосовые сливки, манго, сгущёнка, вода, бананы"},
+        {name:"Чечевичный суп с колбасками",cat:"Суп",kcal:257,protein:17.8,fat:10.4,carbs:26.3,weight:"350 мл",allergens:"лук, сельдерей, глютен",ingredients:"сосиски копчёные, чечевица, BBQ соус, лук, морковь"},
+        {name:"Уха с лососем",cat:"Суп",kcal:138,protein:2.3,fat:4.8,carbs:21.4,weight:"350 мл",allergens:"лук, крахмал, сельдерей, глютен",ingredients:"лосось, картофель, помидоры, лук, морковь, рис, лимон"},
+        {name:"Щи куриные",cat:"Суп",kcal:155,protein:12,fat:8.4,carbs:8.2,weight:"350 мл",allergens:"лук, крахмал, сельдерей, глютен",ingredients:"куриное филе, лук, морковь, картофель, капуста"},
+        {name:"Грибной крем-суп со сливками",cat:"Суп",kcal:162,protein:5.5,fat:9.2,carbs:14.8,weight:"355 мл",allergens:"лук, лактоза, сельдерей, глютен",ingredients:"шампиньоны, белые грибы, лук, морковь, картофель, сливки"},
+        {name:"Суп мясной со стручковой фасолью",cat:"Суп",kcal:251,protein:18.2,fat:15.1,carbs:11.2,weight:"350 мл",allergens:"лук, сельдерей, глютен",ingredients:"фарш свино-говяжий, морковь, лук, картофель, стручковая фасоль"},
+        {name:"Салат с нутом и томатами",cat:"Салаты",kcal:216,protein:6.2,fat:14.5,carbs:15.9,weight:"200 г",allergens:"томаты, лук, мед",ingredients:"айсберг, черри, огурцы, маслины, красный лук, нут маринованный"},
+        {name:"Крабовый салат",cat:"Салаты",kcal:393,protein:10.7,fat:31.4,carbs:17,weight:"200 г",allergens:"",ingredients:"крабовые палочки, огурцы, айсберг, кукуруза, яйцо, майонез"},
+        {name:"Овощной салат",cat:"Салаты",kcal:112,protein:2.1,fat:8.2,carbs:7.9,weight:"200 г",allergens:"томаты, болгарский перец",ingredients:"огурцы, помидоры, болгарский перец, оливковое масло"},
+        {name:"Цезарь с курицей",cat:"Салаты",kcal:318,protein:21.9,fat:21.2,carbs:9.8,weight:"230 г",allergens:"рыба, яйца, молочные, глютен, горчица",ingredients:"запечённая курица, айсберг, пармезан, соус цезарь, черри, сухарики"},
+        {name:"Зелёный салат",cat:"Салаты",kcal:259,protein:5.1,fat:22.2,carbs:9.5,weight:"200 г",allergens:"яйца, горчица, мед",ingredients:"микс салата, яблоко, авокадо, горошек, сельдерей, яйцо, каперсы"},
+        {name:"Оливье",cat:"Салаты",kcal:383,protein:6.9,fat:30.6,carbs:18.7,weight:"230 г",allergens:"яйца, горчица, соя/глютен/лактоза (следы)",ingredients:"яйцо, огурцы, картофель, морковь, горошек, колбаса, майонез"},
+        {name:"Буженина с морковью",cat:"Горячее",kcal:704,protein:33.8,fat:62.8,carbs:2.8,weight:"200 г",allergens:"горчица",ingredients:"свинина, морковь, чеснок, горчица, специи, соус демиглас"},
+        {name:"Рёбра в соусе BBQ",cat:"Горячее",kcal:668,protein:28.6,fat:52.4,carbs:18.9,weight:"~235 г",allergens:"горчица, глютен (следы)",ingredients:"свиные рёбра, соус BBQ, специи"},
+        {name:"Медальоны из свиной вырезки",cat:"Горячее",kcal:412,protein:46.8,fat:23.6,carbs:0.8,weight:"180 г",allergens:"",ingredients:"свиная вырезка, специи"},
+        {name:"Шницель куриный",cat:"Горячее",kcal:392,protein:42.1,fat:16.4,carbs:20.6,weight:"190 г",allergens:"яйцо, глютен, лактоза",ingredients:"куриное филе, панировка (сухари, яйцо, молоко, мука)"},
+        {name:"Запечённый окорочок",cat:"Горячее",kcal:514,protein:33.1,fat:41.8,carbs:2.3,weight:"~230 г",allergens:"горчица",ingredients:"куриный окорочок, майонез, горчица, паприка"},
+        {name:"Куриные кнели с йогуртовым соусом",cat:"Горячее",kcal:398,protein:37.8,fat:22.6,carbs:9.4,weight:"200 г",allergens:"лук, лактоза, орехи",ingredients:"куриное филе, лук, йогуртовый соус, фундук, миндаль"},
+        {name:"Томлёная говядина в красном вине",cat:"Горячее",kcal:416,protein:24.2,fat:27.5,carbs:6.3,weight:"200 г",allergens:"лук",ingredients:"говяжья вырезка, лук, соус демиглас, красное вино"},
+        {name:"Буррито с говядиной",cat:"Горячее",kcal:490,protein:21.4,fat:23.1,carbs:49.9,weight:"280 г",allergens:"лук, перец, томаты, лактоза, глютен",ingredients:"тортилья, говяжий фарш, перец, помидоры, кукуруза, гауда"},
+        {name:"Домашняя котлета",cat:"Горячее",kcal:499,protein:34.7,fat:29.9,carbs:9,weight:"155 г",allergens:"лук, лактоза, глютен",ingredients:"говядина, свинина, лук, булочка, молоко, огурцы"},
+        {name:"Креветки в азиатском стиле",cat:"Горячее",kcal:338,protein:27.6,fat:5.8,carbs:52.3,weight:"300 г",allergens:"яйцо, морепродукты",ingredients:"тигровые креветки, яичная лапша, морковь, кабачки, кунжут, соус"},
+        {name:"Рыбная котлета",cat:"Горячее",kcal:185,protein:27.1,fat:3.5,carbs:12.2,weight:"160 г",allergens:"лук, лактоза, глютен",ingredients:"пангасиус, лук, молоко, зелень, сухари"},
+        {name:"Стейк лосось",cat:"Горячее",kcal:426,protein:35.1,fat:29.7,carbs:0.6,weight:"150 г",allergens:"цитрусы",ingredients:"лосось, масло, специи, лимон"},
+        {name:"Морковные котлеты",cat:"Горячее",kcal:188,protein:5.6,fat:3.1,carbs:34.8,weight:"~230 г",allergens:"глютен, грибы",ingredients:"морковь, мука, овсяная крупа, шампиньоны"},
+        {name:"Тофу на гриле",cat:"Горячее",kcal:136,protein:8.2,fat:7.3,carbs:9.9,weight:"190 г",allergens:"перец болгарский, кунжут",ingredients:"сыр тофу, морковь, кабачок, перец, соевый соус, терияки, кунжут"},
+        {name:"Чикенбургер с крокетами",cat:"Горячее",kcal:699,protein:43.5,fat:21.9,carbs:85.5,weight:"270 г",allergens:"томаты, глютен, яйца, крахмал, лук, лактоза",ingredients:"булочка, курица в панировке, соус, крокеты картофельные"},
+        {name:"Картофельное пюре",cat:"Гарнир",kcal:182,protein:4.1,fat:7.8,carbs:24.7,weight:"200 г",allergens:"лактоза, крахмал",ingredients:"картофель, молоко, сливочное масло"},
+        {name:"Рис",cat:"Гарнир",kcal:210,protein:4.2,fat:0.4,carbs:46.5,weight:"150 г",allergens:"",ingredients:"рис жасмин, соль"},
+        {name:"Булгур с овощами",cat:"Гарнир",kcal:160,protein:5.1,fat:0.4,carbs:34.5,weight:"150 г",allergens:"перец болгарский, сельдерей",ingredients:"булгур, перец, кабачки, сельдерей, масло"},
+        {name:"Крокеты картофельные",cat:"Гарнир",kcal:288,protein:4.2,fat:12.8,carbs:36,weight:"150 г",allergens:"",ingredients:"картофель, панировочные сухари, мука пшеничная, специи"},
+        {name:"Гречка",cat:"Гарнир",kcal:165,protein:5,fat:1.2,carbs:33,weight:"150 г",allergens:"",ingredients:"гречка, соль"},
+        {name:"Брюссельская капуста в сливках",cat:"Гарнир",kcal:150,protein:6.4,fat:10.4,carbs:10.6,weight:"150 г",allergens:"лактоза",ingredients:"брюссельская капуста, сливки, соевый соус, морковь"},
+        {name:"Терияки",cat:"Соусы",kcal:33,protein:0.8,fat:0,carbs:7.2,weight:"30 г",allergens:"",ingredients:"соус терияки"},
+        {name:"Горчица",cat:"Соусы",kcal:20,protein:1.4,fat:0.9,carbs:1.1,weight:"30 г",allergens:"горчица",ingredients:"горчица"},
+        {name:"Майонез",cat:"Соусы",kcal:187,protein:0.4,fat:20.1,carbs:0.9,weight:"30 г",allergens:"лактоза",ingredients:"майонез"},
+        {name:"Сладкий чили",cat:"Соусы",kcal:53,protein:0.2,fat:0.1,carbs:12.9,weight:"30 г",allergens:"",ingredients:"сладкий чили соус"},
+        {name:"Орехи микс",cat:"Соусы",kcal:192,protein:6,fat:16.5,carbs:3,weight:"30 г",allergens:"орехи",ingredients:"миндаль, фундук"},
+        {name:"Мёд",cat:"Соусы",kcal:96,protein:0.1,fat:0,carbs:24,weight:"30 г",allergens:"мед",ingredients:"мёд"},
+        {name:"Сметана",cat:"Соусы",kcal:61,protein:0.8,fat:6,carbs:1,weight:"30 г",allergens:"лактоза",ingredients:"сметана"},
+        {name:"Соус цезарь",cat:"Соусы",kcal:131,protein:3,fat:9.5,carbs:0.7,weight:"30 г",allergens:"яйцо, рыба, горчица",ingredients:"яйцо, тунец, ворчестер, масло, горчица, каперсы, лимон"},
+    ];
+
+    const categories = ["Все","Завтрак","Напитки","Суп","Салаты","Горячее","Гарнир","Соусы"];
+    let activeCat = "Все";
+
+    const catsEl = document.getElementById("cats");
+    const gridEl = document.getElementById("grid");
+    const statsEl = document.getElementById("stats");
+    const searchEl = document.getElementById("search");
+    const sortEl = document.getElementById("sort");
+    const allergenEl = document.getElementById("allergen");
+
+    categories.forEach(c => {
+        const b = document.createElement("button");
+        b.className = "tab" + (c === "Все" ? " active" : "");
+        b.textContent = c;
+        b.onclick = () => {
+            activeCat = c;
+            document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+            b.classList.add("active");
+            render();
+        };
+        catsEl.appendChild(b);
+    });
+
+    function getFiltered() {
+        const q = searchEl.value.toLowerCase();
+        const al = allergenEl.value;
+        let items = menu.filter(item => {
+            if (activeCat !== "Все" && item.cat !== activeCat) return false;
+            if (q && !item.name.toLowerCase().includes(q) && !item.ingredients.toLowerCase().includes(q)) return false;
+            if (al === "no_gluten"  && item.allergens.toLowerCase().includes("глютен"))  return false;
+            if (al === "no_lactose" && item.allergens.toLowerCase().includes("лактоз"))  return false;
+            if (al === "no_egg"     && item.allergens.toLowerCase().includes("яйц"))      return false;
+            if (al === "no_nuts"    && item.allergens.toLowerCase().includes("орех"))     return false;
+            return true;
+        });
+        const s = sortEl.value;
+        if      (s === "kcal_asc")     items.sort((a,b) => a.kcal - b.kcal);
+        else if (s === "kcal_desc")    items.sort((a,b) => b.kcal - a.kcal);
+        else if (s === "protein_desc") items.sort((a,b) => b.protein - a.protein);
+        else if (s === "fat_asc")      items.sort((a,b) => a.fat - b.fat);
+        else if (s === "carbs_asc")    items.sort((a,b) => a.carbs - b.carbs);
+        return items;
+    }
+
+    function kcalColor(k) {
+        if (k < 200) return "#16a34a";
+        if (k < 400) return "#d97706";
+        return "#dc2626";
+    }
+
+    function render() {
+        const items = getFiltered();
+
+        statsEl.innerHTML = `
+    <div class="stat">
+      <div class="stat-label">Блюд</div>
+      <div class="stat-val">${items.length}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Мин. ккал</div>
+      <div class="stat-val">${items.length ? Math.min(...items.map(i => i.kcal)) : "—"}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Макс. ккал</div>
+      <div class="stat-val">${items.length ? Math.max(...items.map(i => i.kcal)) : "—"}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Ср. белки</div>
+      <div class="stat-val">${items.length ? (items.reduce((s,i) => s + i.protein, 0) / items.length).toFixed(1) + " г" : "—"}</div>
+    </div>
+  `;
+
+        if (!items.length) {
+            gridEl.innerHTML = `<div class="empty">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><path d="M8 11h6M11 8v6"/></svg>
+      Ничего не найдено
+    </div>`;
+            return;
+        }
+
+        gridEl.innerHTML = items.map(item => `
+    <div class="card">
+      <span class="cat-badge cat-${item.cat}">${item.cat}</span>
+      <div class="card-name">${item.name}</div>
+      <div class="macros">
+        <div class="macro">Б: <span>${item.protein} г</span></div>
+        <div class="macro">Ж: <span>${item.fat} г</span></div>
+        <div class="macro">У: <span>${item.carbs} г</span></div>
+        <div class="macro">Вес: <span>${item.weight}</span></div>
+      </div>
+      <div class="kcal-row">
+        <span class="kcal-num" style="color:${kcalColor(item.kcal)}">${item.kcal}</span>
+        <span class="kcal-unit">ккал на порцию</span>
+      </div>
+      ${item.allergens ? `<div class="allergens">
+        <svg class="allergen-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        ${item.allergens}
+      </div>` : ""}
+    </div>
+  `).join("");
+    }
+
+    searchEl.addEventListener("input", render);
+    sortEl.addEventListener("change", render);
+    allergenEl.addEventListener("change", render);
+    render();
+</script>
+</body>
+</html>
