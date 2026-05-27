@@ -120,6 +120,98 @@
         .tab:hover { background: var(--bg2); color: var(--text); }
         .tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
+        .tab-ai {
+            background: transparent;
+            border-color: rgba(139, 92, 246, 0.45);
+            color: #8b5cf6;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .tab-ai:hover {
+            background: transparent;
+            color: #8b5cf6;
+            border-color: rgba(139, 92, 246, 0.7);
+            box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+        }
+        .tab-ai.active {
+            background: linear-gradient(120deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+            background-size: 250% 250%;
+            animation: ai-shimmer 4s ease infinite;
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 2px 12px rgba(139, 92, 246, 0.5);
+        }
+
+        /* desktop legend */
+        .ai-legend-desk {
+            display: none;
+            background: linear-gradient(135deg, rgba(99,102,241,0.07), rgba(168,85,247,0.07));
+            border: 0.5px solid rgba(139, 92, 246, 0.22);
+            border-radius: var(--radius);
+            margin-top: -0.5rem;
+            margin-bottom: 1.25rem;
+            padding: 14px 16px;
+        }
+        .ai-legend-desk.visible { display: block; }
+        .ai-legend-title {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 6px;
+        }
+        .ai-legend-title span {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            background: linear-gradient(120deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .ai-legend-desc {
+            font-size: 13px;
+            color: var(--text2);
+            line-height: 1.55;
+        }
+
+        /* mobile legend (accordion) */
+        .ai-legend-mob {
+            display: none;
+            background: linear-gradient(135deg, rgba(99,102,241,0.07), rgba(168,85,247,0.07));
+            border: 0.5px solid rgba(139, 92, 246, 0.22);
+            border-radius: var(--radius);
+            margin-top: -0.5rem;
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+        }
+        .ai-legend-mob.visible { display: block; }
+        .ai-legend-summary {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #8b5cf6;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .ai-legend-summary::-webkit-details-marker { display: none; }
+        .ai-legend-chevron { margin-left: auto; transition: transform 0.2s; flex-shrink: 0; }
+        .ai-legend-mob[open] .ai-legend-chevron { transform: rotate(180deg); }
+        .ai-legend-body {
+            padding: 8px 14px 11px;
+            font-size: 13px;
+            color: var(--text2);
+            line-height: 1.55;
+            border-top: 0.5px solid rgba(139, 92, 246, 0.15);
+        }
+
+        @media (min-width: 601px) { .ai-legend-mob { display: none !important; } }
+        @media (max-width: 600px) { .ai-legend-desk { display: none !important; } }
+
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -231,6 +323,29 @@
             color: var(--text3);
         }
 
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px 3px 8px;
+            border-radius: 20px;
+            background: linear-gradient(120deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+            background-size: 250% 250%;
+            animation: ai-shimmer 4s ease infinite;
+            color: #fff;
+            margin-left: 6px;
+            vertical-align: middle;
+            letter-spacing: 0.03em;
+            box-shadow: 0 1px 10px rgba(139, 92, 246, 0.45);
+        }
+
+        @keyframes ai-shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
         .allergens {
             font-size: 11px;
             color: var(--text3);
@@ -268,6 +383,10 @@
             header h1 { font-size: 26px; }
             .grid { grid-template-columns: 1fr; }
             .controls select { width: 100%; }
+            .stats { grid-template-columns: repeat(4, 1fr); }
+            .stat { padding: 8px 8px; }
+            .stat-label { font-size: 9px; }
+            .stat-val { font-size: 16px; }
         }
     </style>
 </head>
@@ -299,6 +418,21 @@
 
     <div class="cat-tabs" id="cats"></div>
     <div class="stats" id="stats"></div>
+    <div class="ai-legend-desk" id="ai-legend-desk">
+        <div class="ai-legend-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#a855f7"/></linearGradient></defs><path d="M12 1l1.3 9.7L23 12l-9.7 1.3L12 23l-1.3-9.7L1 12l9.7-1.3z" fill="url(#sg)"/></svg>
+            <span>Критерии выбора AI</span>
+        </div>
+        <p class="ai-legend-desc">Лучшее соотношение белок&nbsp;/&nbsp;ккал в каждой категории. Приоритет отдавался блюдам с высоким содержанием белка, умеренными жирами и чистым составом без лишних добавок.</p>
+    </div>
+    <details class="ai-legend-mob" id="ai-legend-mob">
+        <summary class="ai-legend-summary">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="#8b5cf6"><path d="M12 1l1.3 9.7L23 12l-9.7 1.3L12 23l-1.3-9.7L1 12l9.7-1.3z"/></svg>
+            Критерии выбора AI
+            <svg class="ai-legend-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="ai-legend-body">Лучшее соотношение белок&nbsp;/&nbsp;ккал в каждой категории. Приоритет отдавался блюдам с высоким содержанием белка, умеренными жирами и чистым составом без лишних добавок.</div>
+    </details>
     <div class="grid" id="grid"></div>
 </div>
 
@@ -311,32 +445,32 @@
         {name:"Круассан с мортаделлой и вялеными томатами",cat:"Завтрак",kcal:478,protein:16.5,fat:31.8,carbs:31.2,weight:"170 г",allergens:"лактоза, глютен",ingredients:"круассан, мортаделла, вяленые томаты, брынза, сливки"},
         {name:"Драники с лососем и сметаной",cat:"Завтрак",kcal:285,protein:12.6,fat:10.9,carbs:32.5,weight:"210 г",allergens:"лактоза, крахмал",ingredients:"картофель, мука, яйцо, лук, лосось, сметана"},
         {name:"Трилече",cat:"Завтрак",kcal:629,protein:14.9,fat:29.9,carbs:75.6,weight:"250 г",allergens:"яйцо, лактоза, глютен",ingredients:"яйца, сахар, мука, сливки, молоко, сгущёнка, карамель"},
-        {name:"Скрэмбл с грибами и пармезаном",cat:"Завтрак",kcal:352,protein:22.4,fat:26.1,carbs:5.7,weight:"250 г",allergens:"яйцо, лактоза, грибы",ingredients:"яйца, молоко, шампиньоны, соевый соус, пармезан"},
+        {name:"Скрэмбл с грибами и пармезаном",cat:"Завтрак",kcal:352,protein:22.4,fat:26.1,carbs:5.7,weight:"250 г",allergens:"яйцо, лактоза, грибы",ingredients:"яйца, молоко, шампиньоны, соевый соус, пармезан",ai:true},
         {name:"Сэндвич с лососем и творожным сыром",cat:"Завтрак",kcal:482,protein:26.9,fat:23.7,carbs:39.6,weight:"200 г",allergens:"лактоза, глютен",ingredients:"тост, творожный сыр, лосось, огурцы, микс салат"},
         {name:"Фритата с овощами и шпинатом",cat:"Завтрак",kcal:282,protein:17.4,fat:18.7,carbs:10.2,weight:"300 г",allergens:"яйцо, лактоза, перец, томаты",ingredients:"яйца, молоко, шпинат, кабачки, перец, черри"},
         {name:"Тартар из лосося на вафле",cat:"Завтрак",kcal:444,protein:22.6,fat:25.7,carbs:32.4,weight:"200 г",allergens:"яйцо, лактоза, глютен, лук",ingredients:"вафля, лосось, соевый соус, красный лук, зелень, огурцы"},
         {name:"Панкейки с беконом",cat:"Завтрак",kcal:632,protein:23.5,fat:32.8,carbs:56.4,weight:"3 шт + 35 г",allergens:"яйцо, лактоза, глютен",ingredients:"панкейки, бекон, сироп агавы"},
         {name:"Английский завтрак",cat:"Завтрак",kcal:721,protein:41,fat:44.6,carbs:41.2,weight:"~490 г",allergens:"яйцо, глютен",ingredients:"глазунья, бекон, фасоль, грибы, сосиска, помидоры, тосты"},
         {name:"Крок-мадам",cat:"Завтрак",kcal:515,protein:30.4,fat:28.6,carbs:33.9,weight:"270 г",allergens:"яйцо, лактоза, глютен",ingredients:"тост, ветчина, сыр гауда, яйца, молоко, руккола"},
-        {name:"Запеканка творожная",cat:"Завтрак",kcal:398,protein:30,fat:26.8,carbs:25.3,weight:"180 г",allergens:"яйцо, глютен, орехи",ingredients:"творог, сметана, сахар, яйцо, мука, орехи"},
+        {name:"Запеканка творожная",cat:"Завтрак",kcal:398,protein:30,fat:26.8,carbs:25.3,weight:"180 г",allergens:"яйцо, глютен, орехи",ingredients:"творог, сметана, сахар, яйцо, мука, орехи",ai:true},
         {name:"Морс ягодный",cat:"Напитки",kcal:12,protein:0.1,fat:0,carbs:3.1,weight:"300 мл",allergens:"ягоды",ingredients:"ягоды, сахар, вода"},
         {name:"Фреш апельсиновый",cat:"Напитки",kcal:138,protein:2.1,fat:0.3,carbs:30.9,weight:"300 мл",allergens:"цитрусы",ingredients:"апельсин"},
         {name:"Морс облепиховый",cat:"Напитки",kcal:90,protein:0.2,fat:0.4,carbs:21.5,weight:"300 мл",allergens:"",ingredients:"облепиха, сахар, вода"},
         {name:"Шейк банан-манго",cat:"Напитки",kcal:255,protein:2.6,fat:7.2,carbs:49.2,weight:"300 мл",allergens:"лактоза, орехи (следы)",ingredients:"кокосовые сливки, манго, сгущёнка, вода, бананы"},
         {name:"Чечевичный суп с колбасками",cat:"Суп",kcal:257,protein:17.8,fat:10.4,carbs:26.3,weight:"350 мл",allergens:"лук, сельдерей, глютен",ingredients:"сосиски копчёные, чечевица, BBQ соус, лук, морковь"},
         {name:"Уха с лососем",cat:"Суп",kcal:138,protein:2.3,fat:4.8,carbs:21.4,weight:"350 мл",allergens:"лук, крахмал, сельдерей, глютен",ingredients:"лосось, картофель, помидоры, лук, морковь, рис, лимон"},
-        {name:"Щи куриные",cat:"Суп",kcal:155,protein:12,fat:8.4,carbs:8.2,weight:"350 мл",allergens:"лук, крахмал, сельдерей, глютен",ingredients:"куриное филе, лук, морковь, картофель, капуста"},
+        {name:"Щи куриные",cat:"Суп",kcal:155,protein:12,fat:8.4,carbs:8.2,weight:"350 мл",allergens:"лук, крахмал, сельдерей, глютен",ingredients:"куриное филе, лук, морковь, картофель, капуста",ai:true},
         {name:"Грибной крем-суп со сливками",cat:"Суп",kcal:162,protein:5.5,fat:9.2,carbs:14.8,weight:"355 мл",allergens:"лук, лактоза, сельдерей, глютен",ingredients:"шампиньоны, белые грибы, лук, морковь, картофель, сливки"},
-        {name:"Суп мясной со стручковой фасолью",cat:"Суп",kcal:251,protein:18.2,fat:15.1,carbs:11.2,weight:"350 мл",allergens:"лук, сельдерей, глютен",ingredients:"фарш свино-говяжий, морковь, лук, картофель, стручковая фасоль"},
+        {name:"Суп мясной со стручковой фасолью",cat:"Суп",kcal:251,protein:18.2,fat:15.1,carbs:11.2,weight:"350 мл",allergens:"лук, сельдерей, глютен",ingredients:"фарш свино-говяжий, морковь, лук, картофель, стручковая фасоль",ai:true},
         {name:"Салат с нутом и томатами",cat:"Салаты",kcal:216,protein:6.2,fat:14.5,carbs:15.9,weight:"200 г",allergens:"томаты, лук, мед",ingredients:"айсберг, черри, огурцы, маслины, красный лук, нут маринованный"},
         {name:"Крабовый салат",cat:"Салаты",kcal:393,protein:10.7,fat:31.4,carbs:17,weight:"200 г",allergens:"",ingredients:"крабовые палочки, огурцы, айсберг, кукуруза, яйцо, майонез"},
-        {name:"Овощной салат",cat:"Салаты",kcal:112,protein:2.1,fat:8.2,carbs:7.9,weight:"200 г",allergens:"томаты, болгарский перец",ingredients:"огурцы, помидоры, болгарский перец, оливковое масло"},
-        {name:"Цезарь с курицей",cat:"Салаты",kcal:318,protein:21.9,fat:21.2,carbs:9.8,weight:"230 г",allergens:"рыба, яйца, молочные, глютен, горчица",ingredients:"запечённая курица, айсберг, пармезан, соус цезарь, черри, сухарики"},
+        {name:"Овощной салат",cat:"Салаты",kcal:112,protein:2.1,fat:8.2,carbs:7.9,weight:"200 г",allergens:"томаты, болгарский перец",ingredients:"огурцы, помидоры, болгарский перец, оливковое масло",ai:true},
+        {name:"Цезарь с курицей",cat:"Салаты",kcal:318,protein:21.9,fat:21.2,carbs:9.8,weight:"230 г",allergens:"рыба, яйца, молочные, глютен, горчица",ingredients:"запечённая курица, айсберг, пармезан, соус цезарь, черри, сухарики",ai:true},
         {name:"Зелёный салат",cat:"Салаты",kcal:259,protein:5.1,fat:22.2,carbs:9.5,weight:"200 г",allergens:"яйца, горчица, мед",ingredients:"микс салата, яблоко, авокадо, горошек, сельдерей, яйцо, каперсы"},
         {name:"Оливье",cat:"Салаты",kcal:383,protein:6.9,fat:30.6,carbs:18.7,weight:"230 г",allergens:"яйца, горчица, соя/глютен/лактоза (следы)",ingredients:"яйцо, огурцы, картофель, морковь, горошек, колбаса, майонез"},
         {name:"Буженина с морковью",cat:"Горячее",kcal:704,protein:33.8,fat:62.8,carbs:2.8,weight:"200 г",allergens:"горчица",ingredients:"свинина, морковь, чеснок, горчица, специи, соус демиглас"},
         {name:"Рёбра в соусе BBQ",cat:"Горячее",kcal:668,protein:28.6,fat:52.4,carbs:18.9,weight:"~235 г",allergens:"горчица, глютен (следы)",ingredients:"свиные рёбра, соус BBQ, специи"},
-        {name:"Медальоны из свиной вырезки",cat:"Горячее",kcal:412,protein:46.8,fat:23.6,carbs:0.8,weight:"180 г",allergens:"",ingredients:"свиная вырезка, специи"},
+        {name:"Медальоны из свиной вырезки",cat:"Горячее",kcal:412,protein:46.8,fat:23.6,carbs:0.8,weight:"180 г",allergens:"",ingredients:"свиная вырезка, специи",ai:true},
         {name:"Шницель куриный",cat:"Горячее",kcal:392,protein:42.1,fat:16.4,carbs:20.6,weight:"190 г",allergens:"яйцо, глютен, лактоза",ingredients:"куриное филе, панировка (сухари, яйцо, молоко, мука)"},
         {name:"Запечённый окорочок",cat:"Горячее",kcal:514,protein:33.1,fat:41.8,carbs:2.3,weight:"~230 г",allergens:"горчица",ingredients:"куриный окорочок, майонез, горчица, паприка"},
         {name:"Куриные кнели с йогуртовым соусом",cat:"Горячее",kcal:398,protein:37.8,fat:22.6,carbs:9.4,weight:"200 г",allergens:"лук, лактоза, орехи",ingredients:"куриное филе, лук, йогуртовый соус, фундук, миндаль"},
@@ -344,16 +478,16 @@
         {name:"Буррито с говядиной",cat:"Горячее",kcal:490,protein:21.4,fat:23.1,carbs:49.9,weight:"280 г",allergens:"лук, перец, томаты, лактоза, глютен",ingredients:"тортилья, говяжий фарш, перец, помидоры, кукуруза, гауда"},
         {name:"Домашняя котлета",cat:"Горячее",kcal:499,protein:34.7,fat:29.9,carbs:9,weight:"155 г",allergens:"лук, лактоза, глютен",ingredients:"говядина, свинина, лук, булочка, молоко, огурцы"},
         {name:"Креветки в азиатском стиле",cat:"Горячее",kcal:338,protein:27.6,fat:5.8,carbs:52.3,weight:"300 г",allergens:"яйцо, морепродукты",ingredients:"тигровые креветки, яичная лапша, морковь, кабачки, кунжут, соус"},
-        {name:"Рыбная котлета",cat:"Горячее",kcal:185,protein:27.1,fat:3.5,carbs:12.2,weight:"160 г",allergens:"лук, лактоза, глютен",ingredients:"пангасиус, лук, молоко, зелень, сухари"},
+        {name:"Рыбная котлета",cat:"Горячее",kcal:185,protein:27.1,fat:3.5,carbs:12.2,weight:"160 г",allergens:"лук, лактоза, глютен",ingredients:"пангасиус, лук, молоко, зелень, сухари",ai:true},
         {name:"Стейк лосось",cat:"Горячее",kcal:426,protein:35.1,fat:29.7,carbs:0.6,weight:"150 г",allergens:"цитрусы",ingredients:"лосось, масло, специи, лимон"},
         {name:"Морковные котлеты",cat:"Горячее",kcal:188,protein:5.6,fat:3.1,carbs:34.8,weight:"~230 г",allergens:"глютен, грибы",ingredients:"морковь, мука, овсяная крупа, шампиньоны"},
         {name:"Тофу на гриле",cat:"Горячее",kcal:136,protein:8.2,fat:7.3,carbs:9.9,weight:"190 г",allergens:"перец болгарский, кунжут",ingredients:"сыр тофу, морковь, кабачок, перец, соевый соус, терияки, кунжут"},
         {name:"Чикенбургер с крокетами",cat:"Горячее",kcal:699,protein:43.5,fat:21.9,carbs:85.5,weight:"270 г",allergens:"томаты, глютен, яйца, крахмал, лук, лактоза",ingredients:"булочка, курица в панировке, соус, крокеты картофельные"},
         {name:"Картофельное пюре",cat:"Гарнир",kcal:182,protein:4.1,fat:7.8,carbs:24.7,weight:"200 г",allergens:"лактоза, крахмал",ingredients:"картофель, молоко, сливочное масло"},
         {name:"Рис",cat:"Гарнир",kcal:210,protein:4.2,fat:0.4,carbs:46.5,weight:"150 г",allergens:"",ingredients:"рис жасмин, соль"},
-        {name:"Булгур с овощами",cat:"Гарнир",kcal:160,protein:5.1,fat:0.4,carbs:34.5,weight:"150 г",allergens:"перец болгарский, сельдерей",ingredients:"булгур, перец, кабачки, сельдерей, масло"},
+        {name:"Булгур с овощами",cat:"Гарнир",kcal:160,protein:5.1,fat:0.4,carbs:34.5,weight:"150 г",allergens:"перец болгарский, сельдерей",ingredients:"булгур, перец, кабачки, сельдерей, масло",ai:true},
         {name:"Крокеты картофельные",cat:"Гарнир",kcal:288,protein:4.2,fat:12.8,carbs:36,weight:"150 г",allergens:"",ingredients:"картофель, панировочные сухари, мука пшеничная, специи"},
-        {name:"Гречка",cat:"Гарнир",kcal:165,protein:5,fat:1.2,carbs:33,weight:"150 г",allergens:"",ingredients:"гречка, соль"},
+        {name:"Гречка",cat:"Гарнир",kcal:165,protein:5,fat:1.2,carbs:33,weight:"150 г",allergens:"",ingredients:"гречка, соль",ai:true},
         {name:"Брюссельская капуста в сливках",cat:"Гарнир",kcal:150,protein:6.4,fat:10.4,carbs:10.6,weight:"150 г",allergens:"лактоза",ingredients:"брюссельская капуста, сливки, соевый соус, морковь"},
         {name:"Терияки",cat:"Соусы",kcal:33,protein:0.8,fat:0,carbs:7.2,weight:"30 г",allergens:"",ingredients:"соус терияки"},
         {name:"Горчица",cat:"Соусы",kcal:20,protein:1.4,fat:0.9,carbs:1.1,weight:"30 г",allergens:"горчица",ingredients:"горчица"},
@@ -365,7 +499,7 @@
         {name:"Соус цезарь",cat:"Соусы",kcal:131,protein:3,fat:9.5,carbs:0.7,weight:"30 г",allergens:"яйцо, рыба, горчица",ingredients:"яйцо, тунец, ворчестер, масло, горчица, каперсы, лимон"},
     ];
 
-    const categories = ["Все","Завтрак","Напитки","Суп","Салаты","Горячее","Гарнир","Соусы"];
+    const categories = ["Все","Выбор AI","Завтрак","Напитки","Суп","Салаты","Горячее","Гарнир","Соусы"];
     let activeCat = "Все";
 
     const catsEl = document.getElementById("cats");
@@ -377,8 +511,13 @@
 
     categories.forEach(c => {
         const b = document.createElement("button");
-        b.className = "tab" + (c === "Все" ? " active" : "");
-        b.textContent = c;
+        const isAI = c === "Выбор AI";
+        b.className = "tab" + (c === "Все" ? " active" : "") + (isAI ? " tab-ai" : "");
+        if (isAI) {
+            b.innerHTML = '<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l1.3 9.7L23 12l-9.7 1.3L12 23l-1.3-9.7L1 12l9.7-1.3z"/></svg>Выбор AI';
+        } else {
+            b.textContent = c;
+        }
         b.onclick = () => {
             activeCat = c;
             document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
@@ -392,7 +531,8 @@
         const q = searchEl.value.toLowerCase();
         const al = allergenEl.value;
         let items = menu.filter(item => {
-            if (activeCat !== "Все" && item.cat !== activeCat) return false;
+            if (activeCat === "Выбор AI" && !item.ai) return false;
+            if (activeCat !== "Все" && activeCat !== "Выбор AI" && item.cat !== activeCat) return false;
             if (q && !item.name.toLowerCase().includes(q) && !item.ingredients.toLowerCase().includes(q)) return false;
             if (al === "no_gluten"  && item.allergens.toLowerCase().includes("глютен"))  return false;
             if (al === "no_lactose" && item.allergens.toLowerCase().includes("лактоз"))  return false;
@@ -417,6 +557,9 @@
 
     function render() {
         const items = getFiltered();
+        const isAICat = activeCat === "Выбор AI";
+        document.getElementById("ai-legend-desk").classList.toggle("visible", isAICat);
+        document.getElementById("ai-legend-mob").classList.toggle("visible", isAICat);
 
         statsEl.innerHTML = `
     <div class="stat">
@@ -447,7 +590,7 @@
 
         gridEl.innerHTML = items.map(item => `
     <div class="card">
-      <span class="cat-badge cat-${item.cat}">${item.cat}</span>
+      <span class="cat-badge cat-${item.cat}">${item.cat}</span>${item.ai ? '<span class="ai-badge"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M12 1l1.3 9.7L23 12l-9.7 1.3L12 23l-1.3-9.7L1 12l9.7-1.3z"/></svg>Выбор AI</span>' : ''}
       <div class="card-name">${item.name}</div>
       <div class="macros">
         <div class="macro">Б: <span>${item.protein} г</span></div>
